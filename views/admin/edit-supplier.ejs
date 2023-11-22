@@ -1,0 +1,61 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <form class="product-form" action="/admin/<% if (editing) { %>edit-supplier<% } else { %>add-supplier<% } %>" method="POST">
+            <div class="form-control">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" value="<% if (editing) { %><%= supplier.name %><% } %>">
+            </div>
+            <div class="form-control">
+                <label for="contactInfo">Supplier Contact Info</label>
+                <textarea name="contactInfo" id="contactInfo" rows="5"><% if (editing) { %><%= supplier.contactInfo %><% } %></textarea>
+            </div>
+            <% if (editing) { %>
+                <input type="hidden" value="<%= supplier.id %>" name="supplierId">
+            <% }%>
+            <button class="centered btn" type="submit"><% if (editing) { %>Update Supplier<% } else { %>Add Supplier<% } %></button>
+        </form>
+        <% if (editing) { %>
+            <% if (supplier.products.length > 0) { %>
+              <h2 class="centered">Supplier products: </h2>
+              <div class="grid">
+                <% for (let product of supplier.products) { %>
+                  <article class="card product-item">
+                      <header class="card__header">
+                          <h1 class="product__title">
+                              <%= product.name %>
+                          </h1>
+                      </header>
+                      <div class="card__image">
+                          <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
+                      </div>
+                      <div class="card__content">
+                          <h2 class="product__price">$
+                              <%= product.price %>
+                          </h2>
+                          <p class="product__description">
+                              <%= product.description %>
+                          </p>
+                      </div>
+                      <div class="card__actions">
+                          <a href="/admin/edit-product/<%= product.id %>?edit=true" class="btn">Edit</a>
+                          <form action="/admin/delete-product" method="POST">
+                              <input type="hidden" value="<%= product.id %>" name="productId">
+                              <button class="btn" type="submit">Delete</button>
+                          </form>
+                      </div>
+                  </article>
+              <% } %>
+              </div>
+            <% } else { %>
+                <h2>No Products found of this Supplier</h2>
+            <% } %>
+        <% } %>
+    </main>
+<%- include('../includes/end.ejs') %>
